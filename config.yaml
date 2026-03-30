@@ -1,0 +1,4 @@
+paths:
+  train_data: ./data/FishtrainDATA.csv
+  test_data: ./data/FishtestDATA.csv
+  
