@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 
 class TreeNode:
@@ -11,6 +12,7 @@ class TreeNode:
         self.samples = samples
 
 
+
 class DecisionTree:
     def __init__(self, min_samples_leaf=2, max_depth=20):
         self.min_samples_leaf = min_samples_leaf
@@ -20,6 +22,17 @@ class DecisionTree:
         self.classes = None
     
     def entropy_calculation(self, labels):
+        # histogram=np.bincount(  labels)
+        # ps=histogram/len(labels)
+        # return -np.sum[p*np.log(p) for p in ps if p>0] 
+
+
+
+
+
+
+
+
         if len(labels) == 0:
             return 0
         
@@ -62,24 +75,24 @@ class DecisionTree:
         
         n_features = len(features[0]) if len(features) > 0 else 0
         
-        for feature_idx in range(n_features):
+        for feature_idx in range(n_features): 
             feature_values = []
             for i in range(len(features)):
                 feature_values.append(features[i][feature_idx])
             
-            unique_values = []
+            values_ = [] #unique values.
             for val in feature_values:
-                if val not in unique_values:
-                    unique_values.append(val)
+                if val not in values_:
+                    values_.append(val)
             
-            unique_values.sort()
+            values_.sort() 
             
-            for threshold in unique_values:
+            for threshold in values_:
                 left_labels = []
                 right_labels = []
                 
                 for i in range(len(features)):
-                    if features[i][feature_idx] <= threshold:
+                    if features[i][feature_idx] <= threshold: #for regression type classification.
                         left_labels.append(labels[i])
                     else:
                         right_labels.append(labels[i])
@@ -113,8 +126,8 @@ class DecisionTree:
             for label in labels:
                 class_counts[label] = class_counts.get(label, 0) + 1
             
-            majority_class = max(class_counts, key=class_counts.get)
-            leaf = TreeNode(value=majority_class, samples=n_samples)
+            major_class = max(class_counts, key=class_counts.get)
+            leaf = TreeNode(value=major_class, samples=n_samples)
             return leaf
         
         if depth >= self.max_depth:
@@ -122,8 +135,8 @@ class DecisionTree:
             for label in labels:
                 class_counts[label] = class_counts.get(label, 0) + 1
             
-            majority_class = max(class_counts, key=class_counts.get)
-            leaf = TreeNode(value=majority_class, samples=n_samples)
+            major_class = max(class_counts, key=class_counts.get)
+            leaf = TreeNode(value=major_class, samples=n_samples)
             return leaf
         
         best_feature, best_threshold, best_gain = self.find_best_split(features, labels)
@@ -133,8 +146,8 @@ class DecisionTree:
             for label in labels:
                 class_counts[label] = class_counts.get(label, 0) + 1
             
-            majority_class = max(class_counts, key=class_counts.get)
-            leaf = TreeNode(value=majority_class, samples=n_samples)
+            major_class = max(class_counts, key=class_counts.get)
+            leaf = TreeNode(value=major_class, samples=n_samples)
             return leaf
         
         left_features = []
@@ -173,7 +186,7 @@ class DecisionTree:
             return self.predict_sample(node.right, features_row)
     
     def fit(self, X, y):
-        if hasattr(X, 'values'):
+        if hasattr(X, 'values'): #has attributes
             self.feature_names = list(X.columns)
             features = [list(row) for row in X.values]
         else:
@@ -196,7 +209,7 @@ class DecisionTree:
     
     def predict(self, X):
         if self.tree is None:
-            raise ValueError("Tree not fitted. Call fit() first.")
+            raise ValueError("You have to fit tree first. call .fit() method")
         
         if hasattr(X, 'values'):
             features = [list(row) for row in X.values]
