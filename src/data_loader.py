@@ -1,14 +1,11 @@
 import pandas as pd
 import numpy as np
-from decision_tree import DecisionTree
+from src.decision_tree import DecisionTree
 
-def load_data(train_path, test_path):
+def load_and_split(train_path, test_path):
     train_data = pd.read_csv(train_path)
     test_data = pd.read_csv(test_path)
 
-    return train_data, test_data
-
-def split_data(train_data, test_data):
     X_train = train_data.drop("Species", axis=1)
     y_train = train_data["Species"]
     X_test = test_data.drop("Species", axis=1)
@@ -21,7 +18,7 @@ def split_data(train_data, test_data):
 
     return X_train, y_train, X_test, y_test
 
-def k_fold(X, y, loss_method, n_splits=10):
+def k_fold(X, y, metric_func, n_splits=10, max_depth=8, min_samples_leaf=2):    
     indices = np.arange(X.shape[0])
     np.random.seed(42) 
     np.random.shuffle(indices)
@@ -29,30 +26,31 @@ def k_fold(X, y, loss_method, n_splits=10):
     X_data = X[indices]
     y_data = y[indices]
 
-    loss_history = []
+    results_history = []
     len_data = X.shape[0]
-
     fold_size = len_data // n_splits
     
     for i in range(n_splits):
         start = i * fold_size
         end = (i + 1) * fold_size if i != n_splits - 1 else len_data 
         
-        X_test, y_test = X_data[start:end, :], y_data[start:end, :]
+        X_test, y_test = X_data[start:end, :], y_data[start:end]
         
         train_mask = np.ones(len_data, dtype=bool)
-        
         train_mask[start:end] = False
-        X_train, y_train = X_data[train_mask, :], y_data[train_mask, :]
+        X_train, y_train = X_data[train_mask, :], y_data[train_mask]
 
-        model = DecisionTree()
-        model = model.fit(X_train, y_train)
+        model = DecisionTree(min_samples_leaf=min_samples_leaf, max_depth=max_depth)        
+        model.fit(X_train, y_train)
 
         preds = model.predict(X_test)
 
-        loss = loss_method(y_test, preds)
+        y_true_list = y_test.tolist()
+        y_pred_list = list(preds)
 
-        print(f"Loss {i+1}: {loss:.6f}")
-        loss_history.append(loss)
+        score = metric_func(y_true_list, y_pred_list)
+        results_history.append(score)
+        
+        print(f"Fold {i+1} Score: {score:.4f}")
 
-    return loss_history
+    return results_history

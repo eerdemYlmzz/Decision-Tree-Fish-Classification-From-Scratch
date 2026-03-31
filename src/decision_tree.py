@@ -11,8 +11,6 @@ class TreeNode:
         self.value = value
         self.samples = samples
 
-
-
 class DecisionTree:
     def __init__(self, min_samples_leaf=2, max_depth=20):
         self.min_samples_leaf = min_samples_leaf
@@ -22,17 +20,6 @@ class DecisionTree:
         self.classes = None
     
     def entropy_calculation(self, labels):
-        # histogram=np.bincount(  labels)
-        # ps=histogram/len(labels)
-        # return -np.sum[p*np.log(p) for p in ps if p>0] 
-
-
-
-
-
-
-
-
         if len(labels) == 0:
             return 0
         
@@ -87,7 +74,8 @@ class DecisionTree:
             
             values_.sort() 
             
-            for threshold in values_:
+            for k in range(len(values_) - 1):
+                threshold = (values_[k] + values_[k+1]) / 2
                 left_labels = []
                 right_labels = []
                 
@@ -266,4 +254,3 @@ def predict_batch(tree, features, class_labels):
         confidence = correct / len(predictions)
     
     return predictions, confidence
-
