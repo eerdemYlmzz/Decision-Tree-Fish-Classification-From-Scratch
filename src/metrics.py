@@ -71,8 +71,8 @@ def precision_recall_f1_from_confusion_matrix(cm):
         actual_positive = 0
 
         for j in range(n):
-            predicted_positive += cm[j][i]  # column sum
-            actual_positive += cm[i][j]     # row sum
+            predicted_positive += cm[j][i]   
+            actual_positive += cm[i][j]   
 
         if predicted_positive > 0:
             precision[i] = tp / predicted_positive

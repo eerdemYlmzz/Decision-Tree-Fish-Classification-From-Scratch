@@ -67,7 +67,7 @@ class DecisionTree:
             for i in range(len(features)):
                 feature_values.append(features[i][feature_idx])
             
-            values_ = [] #unique values.
+            values_ = [] 
             for val in feature_values:
                 if val not in values_:
                     values_.append(val)
@@ -80,7 +80,7 @@ class DecisionTree:
                 right_labels = []
                 
                 for i in range(len(features)):
-                    if features[i][feature_idx] <= threshold: #for regression type classification.
+                    if features[i][feature_idx] <= threshold:  
                         left_labels.append(labels[i])
                     else:
                         right_labels.append(labels[i])
@@ -174,7 +174,7 @@ class DecisionTree:
             return self.predict_sample(node.right, features_row)
     
     def fit(self, X, y):
-        if hasattr(X, 'values'): #has attributes
+        if hasattr(X, 'values'):  
             self.feature_names = list(X.columns)
             features = [list(row) for row in X.values]
         else:
